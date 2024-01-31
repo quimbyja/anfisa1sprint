@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import render
 
 ice_cream_catalog = [
@@ -20,14 +21,21 @@ ice_cream_catalog = [
     },
 ]
 
+ICE_CREAM_ID = {item['id']: item for item in ice_cream_catalog}
+
 
 def ice_cream_detail(request, pk):
-    template = 'ice_cream/detail.html'
-    context = {'ice_cream': ice_cream_catalog[pk]}
-    return render(request, template, context)
+    try:
+        return render(request,
+                      'ice_cream/ice_cream_detail.html',
+                      {'ice_cream': ICE_CREAM_ID[pk],
+                       })
+    except KeyError:
+        raise Http404("Page not found")
 
 
 def ice_cream_list(request):
-    template = 'ice_cream/list.html'
-    context = {'ice_cream_list': ice_cream_catalog}
-    return render(request, template, context)
+    return render(request,
+                  'ice_cream/ice_cream_list.html',
+                  {'ice_cream_list': ice_cream_catalog,
+                   })
